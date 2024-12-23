@@ -30,6 +30,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: cat my.cnf
+        run: |
+          cat ${{ github.workspace }}/mysql/my.cnf
+          cat /etc/mysql/conf.d/my_custom.cnf
+
       - name: Run MySQL dependent tests
         run: |
           mysql -h 127.0.0.1 -u root -proot -e "SELECT @@GLOBAL.sql_mode;"
