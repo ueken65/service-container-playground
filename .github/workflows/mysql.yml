@@ -32,8 +32,12 @@ jobs:
     steps:
       - name: cat my.cnf
         run: |
-          cat ${{ github.workspace }}/mysql/my.cnf
+          pwd
+          ls -al
+          cd mysql
+          ls -al
           cat /etc/mysql/conf.d/my_custom.cnf
+          cat ${{ github.workspace }}/mysql/my.cnf
 
       - name: Run MySQL dependent tests
         run: |
