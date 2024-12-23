@@ -1,0 +1,35 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  test:
+    runs-on:
+      labels: ubuntu-latest
+    services:
+      db:
+        image: mysql:8.0.23
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          TZ: Asia/Tokyo
+        ports:
+          - 3306:3306
+        volumes:
+          - ${{ github.workspace }}/mysql/my.cnf:/etc/mysql/conf.d/my_custom.cnf
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Run MySQL dependent tests
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "SELECT @@GLOBAL.sql_mode;"
